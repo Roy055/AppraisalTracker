@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.MuiDataGrid-root {
+  height: 100% !important;
+}
+
+.MuiDataGrid-main {
+  height: 100% !important;
+}
+
+.MuiDataGrid-virtualScroller {
+  overflow-y: auto !important;
+}
+
+@media screen and (max-width: 600px) {
+  .MuiDialogContent-root {
+    padding: 8px !important;
+  }
+  
+  .MuiTablePagination-selectLabel,
+  .MuiTablePagination-displayedRows {
+    margin: 0 !important;
+  }
+}
