@@ -105,74 +105,74 @@ const FeedbackSection = ({ appraisal, onStatusChange }) => {
 
   const canViewManagerReview = () => {
     if (!appraisal) return false;
-    return ['pm-review', 'hr-review', 'completed'].includes(appraisal.status);
+    return ['self-review', 'pm-review', 'hr-review', 'completed'].includes(appraisal.status);
   };
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>Manager Review</Typography>
       
-      {canViewManagerReview() && (
+      {canViewManagerReview() && review ? (
         <Box sx={{ mb: 4 }}>
-          {review && (
-            <>
-              <Typography variant="subtitle1" sx={{ mb: 2 }}>Manager Assessment</Typography>
-              
-              {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-              {success && <Alert severity="success" sx={{ mb: 2 }}>Manager review submitted successfully!</Alert>}
-              
-              <Box sx={{ mt: 2, mb: 3 }}>
-                <Typography component="legend">Manager Rating</Typography>
-                <Rating
-                  name="managerRating"
-                  value={managerReviewData.managerRating}
-                  onChange={handleRatingChange}
-                  precision={0.5}
-                  size="large"
-                  readOnly={!canProvideManagerReview()}
-                />
-              </Box>
-              
-              <TextField
-                margin="dense"
-                name="managerComments"
-                label="Manager Comments"
-                fullWidth
-                multiline
-                rows={4}
-                value={managerReviewData.managerComments}
-                onChange={handleManagerReviewChange}
-                sx={{ 
-                  mb: 2,
-                  '& .MuiInputBase-root': {
-                    backgroundColor: !canProvideManagerReview() ? 'rgba(0, 0, 0, 0.06)' : 'transparent'
-                  }
-                }}
-                disabled={!canProvideManagerReview()}
+          <>
+            <Typography variant="subtitle1" sx={{ mb: 2 }}>Manager Assessment</Typography>
+            
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            {success && <Alert severity="success" sx={{ mb: 2 }}>Manager review submitted successfully!</Alert>}
+            
+            <Box sx={{ mt: 2, mb: 3 }}>
+              <Typography component="legend">Manager Rating</Typography>
+              <Rating
+                name="managerRating"
+                value={managerReviewData.managerRating}
+                onChange={handleRatingChange}
+                precision={0.5}
+                size="large"
+                readOnly={!canProvideManagerReview()}
               />
-              
-              {canProvideManagerReview() && (
-                <Button 
-                  type="submit" 
-                  variant="contained" 
-                  color="primary"
-                  disabled={submitting || managerReviewData.managerRating === 0}
-                  startIcon={<StarIcon />}
-                  sx={{ mt: 1 }}
-                  onClick={handleManagerReviewSubmit}
-                >
-                  {submitting ? 'Submitting...' : 'Submit Manager Review'}
-                </Button>
-              )}
-            </>
-          )}
-          {!review && (
-            <Typography>No manager review available yet.</Typography>
-          )}
+            </Box>
+            
+            <TextField
+              margin="dense"
+              name="managerComments"
+              label="Manager Comments"
+              fullWidth
+              multiline
+              rows={4}
+              value={managerReviewData.managerComments}
+              onChange={handleManagerReviewChange}
+              sx={{ 
+                mb: 2,
+                '& .MuiInputBase-root': {
+                  backgroundColor: !canProvideManagerReview() ? 'rgba(0, 0, 0, 0.06)' : 'transparent'
+                }
+              }}
+              disabled={!canProvideManagerReview()}
+            />
+            
+            {canProvideManagerReview() && (
+              <Button 
+                type="submit" 
+                variant="contained" 
+                color="primary"
+                disabled={submitting || managerReviewData.managerRating === 0}
+                startIcon={<StarIcon />}
+                sx={{ mt: 1 }}
+                onClick={handleManagerReviewSubmit}
+              >
+                {submitting ? 'Submitting...' : 'Submit Manager Review'}
+              </Button>
+            )}
+          </>
         </Box>
-      )}
-      {!canViewManagerReview() && (
-        <Typography>Manager review will be available after self-review is completed.</Typography>
+      ) : (
+        <Typography>
+          {appraisal && appraisal.status === 'self-review' && !review 
+            ? "Loading employee's self-review data..." 
+            : appraisal && appraisal.status === 'pending'
+              ? "Manager review will be available after self-review is completed."
+              : "No self-review data available yet."}
+        </Typography>
       )}
     </Paper>
   );

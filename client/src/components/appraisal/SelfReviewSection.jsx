@@ -122,14 +122,23 @@ const SelfReviewSection = ({ appraisal, onStatusChange }) => {
     // Only the employee who owns the appraisal can submit
     const isAppraisalOwner = appraisal.employee?.toString() === user._id?.toString();
     
-    // Can submit or edit only in pending or self-review stages
-    return isAppraisalOwner && ['pending', 'self-review'].includes(appraisal.status);
+    // Can submit only in pending stage and if no review exists yet
+    return isAppraisalOwner && appraisal.status === 'pending' && !review;
   };
 
-  // If in read-only mode (for managers/HR viewing an employee's self-review)
+  // If in read-only mode (for managers/HR viewing an employee's self-review or after submission)
   const isReadOnly = () => {
     if (!user || !appraisal) return true;
-    return appraisal.employee?.toString() !== user._id?.toString() || !['pending', 'self-review'].includes(appraisal.status);
+    
+    // Read-only if:
+    // 1. Not the appraisal owner, OR
+    // 2. Review already exists (already submitted), OR
+    // 3. Status is not pending
+    return (
+      appraisal.employee?.toString() !== user._id?.toString() || 
+      review !== null || 
+      appraisal.status !== 'pending'
+    );
   };
 
   if (loading) {
@@ -148,7 +157,7 @@ const SelfReviewSection = ({ appraisal, onStatusChange }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>Self Review</Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>Self review submitted successfully!</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }}>Self review submitted successfully! Your submission is final and cannot be changed.</Alert>}
       
       <form onSubmit={handleSubmit}>
         <TextField
@@ -228,7 +237,7 @@ const SelfReviewSection = ({ appraisal, onStatusChange }) => {
             disabled={submitting}
             sx={{ mt: 2 }}
           >
-            {submitting ? 'Submitting...' : review ? 'Update Self Review' : 'Submit Self Review'}
+            {submitting ? 'Submitting...' : 'Submit Self Review'}
           </Button>
         )}
       </form>
